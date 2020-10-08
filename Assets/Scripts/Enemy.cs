@@ -3,17 +3,20 @@ using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("General")]
     public float startSpeed = 10f;
     public float startHealth = 100;
     public int moneyValue = 50;
-    private float health;
-
+    
     [Header("Unity Stuff")]
     public GameObject deathEffect;
     public Image healthBar;
 
     [HideInInspector]
     public float speed;
+
+    private float health;
+    private bool isDead = false;
 
     private void Start()
     {
@@ -27,7 +30,7 @@ public class Enemy : MonoBehaviour
 
         healthBar.fillAmount = health / startHealth;
 
-        if(health <= 0)
+        if(health <= 0 && !isDead)
         {
             Die();
         }
@@ -40,10 +43,11 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
-        GameObject effect = (GameObject)Instantiate(deathEffect, transform.position, Quaternion.identity);
+        isDead = true;
         PlayerStats.Money += moneyValue;
-        Destroy(gameObject);
-        WaveSpawner.EnemiesAlive--;
+        GameObject effect = (GameObject)Instantiate(deathEffect, transform.position, Quaternion.identity);
         Destroy(effect, 5f);
+        WaveSpawner.EnemiesAlive--;
+        Destroy(gameObject);
     }
 }
